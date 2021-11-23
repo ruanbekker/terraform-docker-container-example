@@ -4,6 +4,9 @@ terraform {
       source  = "kreuzwerker/docker"
       version = "2.15.0"
     }
+    random = {
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -11,3 +14,5 @@ terraform {
 provider "docker" {
   host = "unix:///var/run/docker.sock"
 }
+
+provider "random" {}

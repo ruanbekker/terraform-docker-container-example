@@ -1,5 +1,11 @@
 # https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container
 
+resource "random_string" "nginx" {
+  length  = 8
+  upper   = false
+  special = false
+}
+
 resource "docker_image" "nginx" {
   name = "nginx:stable-alpine"
 }
@@ -58,7 +64,7 @@ resource "docker_container" "traefik" {
 
   labels {
     label = "traefik.frontend.rule"
-    value = "Host:traefik.localdns.xyz"
+    value = "Host:traefik.${var.domain}"
   }
 
   labels {
@@ -114,7 +120,7 @@ resource "docker_container" "nginx" {
 
   labels {
     label = "traefik.frontend.rule"
-    value = "Host:www.localdns.xyz"
+    value = "Host:www.${random_string.nginx.result}.${var.domain}"
   }
 
   labels {
@@ -123,7 +129,8 @@ resource "docker_container" "nginx" {
   }
 
   depends_on = [
-    docker_container.traefik
+    docker_container.traefik,
+    random_string.nginx
   ]
 
 }
